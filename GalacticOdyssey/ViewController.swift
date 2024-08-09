@@ -84,10 +84,24 @@ class ViewController: UIViewController {
         setupLabels()
 
         updateState(0)
+
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appWillEnterForeground),
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil)
+    }
+
+    @objc func appWillEnterForeground() {
+        setupAnimations()
     }
 
     override var prefersHomeIndicatorAutoHidden: Bool {
         return true
+    }
+
+    private func setupAnimations() {
+        setupRoadAnimation()
     }
 }
 
@@ -180,7 +194,10 @@ extension ViewController {
         road.fillColor = UIColor.clear.cgColor
         scene.layer.addSublayer(road)
 
+        setupRoadAnimation()
+    }
 
+    private func setupRoadAnimation() {
         let linePhaseAnimation = CABasicAnimation(keyPath: "lineDashPhase")
         // the lineDashPhase must be the sum of lineDashPattern elements so it loops correctly.
         linePhaseAnimation.fromValue = (road.lineDashPattern ?? []).reduce(0, { partialResult, value in
